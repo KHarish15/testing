@@ -6,79 +6,95 @@ This repository has been automatically configured with GitHub Actions for contin
 
 ## Setting up GitHub Actions for KHarish15/testing
 
-This guide details setting up GitHub Actions for your Python project, focusing on running Pytest tests.
+This guide details setting up GitHub Actions for the Python project `KHarish15/testing`.  The project structure is assumed to be simple, with `main.py` containing functions and `test_*.py` files for tests.
 
 **1. Adding the Workflow File:**
 
-Create a new file named `.github/workflows/test.yml` in your repository.  This is a standard location for GitHub Actions workflows.  The following content will run tests on every push.
+Create a file named `.github/workflows/test.yml` in your repository.  This will define the CI/CD workflow.
 
 ```yaml
-name: Run Tests
+name: Python Tests
 
 on:
   push:
-    branches:
-      - main  # Or any branch you want to trigger tests on
+    branches: [ "main" ]
   pull_request:
-    branches:
-      - main
+    branches: [ "main" ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
+      - uses: actions/checkout@v3
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.9' # Or your desired Python version
-
+          python-version: "3.9" # Or your desired Python version
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install pytest
-
       - name: Run tests
         run: |
           pytest
 ```
 
+**2. Required Environment Variables:**
 
-**2. Required Environment Variables (None in this case):**
-
-No specific environment variables are required for this project.
-
+None required for this project.
 
 **3. Dependencies:**
 
-The project requires `pytest`. This will be installed automatically in step 3 of the workflow file.
+Install `pytest` as specified in the dependencies list.  The `pip install pytest` command in the workflow ensures this is done on each run.
 
+**4. Test Framework Configuration:**
 
-**4. Configuring the Test Framework (Pytest):**
-
-Pytest is already configured in the workflow file. Ensure that `test_main.py` is in the same directory as `main.py`.  The workflow will automatically locate and execute `test_main.py`.  The code snippet you provided for test functions is missing the actual `test_divide()` function and the import `from main import ...` will need to be present in your `test_main.py` for the tests to run successfully.
-
+The provided `test_*.py` files likely follow standard `pytest` conventions. No special configuration is needed beyond the `pytest` dependency installation.
 
 **5. Viewing Test Results:**
 
-After a push or pull request, GitHub Actions will execute the workflow. Navigate to the Actions tab in your repository on GitHub.  Find the workflow run and click on it. The logs will show the output of the test execution, including any failures. A summary table will show the test outcome, successful/failed test counts.
-
+GitHub Actions will display the test results in the Actions tab of your repository's main page.  The output will indicate if tests passed or failed, and the workflow status will reflect the result (success or failure).  Scroll through the logs of the `Run tests` step to see detailed output about the individual tests.
 
 **6. Troubleshooting Common Issues:**
 
-* **Tests fail:** Double-check your `test_main.py` file for syntax errors, missing imports, incorrect assertions, or any issues in the `main.py` functions.  Ensure the `test_divide` function is correctly implemented and that the `main` module contains all the functions needed. Verify if all dependencies were installed successfully. Review the workflow logs for detailed error messages.
-* **Python version incompatibility:** If you encounter an error related to Python version, ensure that the correct Python version is specified in the `with` statement of the "Set up Python" step.  Verify the Python version in the `requirements.txt` file.
-* **Missing `pytest`:** If `pytest` isn't found, ensure the `pip install pytest` command is working in the workflow step.
-* **Issues with `main.py` or `test_main.py`:** Check for simple logic errors or typos in these files.
+* **Tests failing:** Check the output of the `Run tests` step.  It will show you exactly which tests failed and the error messages. Common issues include typos in code, incorrect assertions, or unforeseen dependencies.
+* **`pip` installation problems:** Ensure `pip` is correctly installed and upgraded within the workflow using `python -m pip install --upgrade pip`. Verify that `pip` can find and install packages.
+* **Python version mismatch:** If you're using a specific Python version, ensure the `python-version` in the `setup-python` step matches the version used to develop your code and run the tests.
+
+**7. Project-Specific Configuration Steps:**
+
+* **Test file organization:** Ensure your test files are organized in a way that `pytest` can discover them.  Common locations are a `test` directory or a folder with files matching `test_*.py`.
+* **Error handling:** Review the `main.py` functions and ensure the `ValueError` exceptions are properly handled both inside and outside the function.
+
+**Example project structure (recommended):**
+
+```
+KHarish15/testing/
+├── main.py
+└── test/
+    └── test_main.py
+```
 
 
-**7. Project-Specific Configuration Steps (None):**
+**Example `main.py`:**
+```python
+def add(a, b):
+    return a + b
 
-This simple project structure does not require any specific project-level configurations beyond the code itself and the workflow file.
+# ... other functions ...
+```
 
-**Important Note:** This example assumes the correct file structure (`main.py` and `test_main.py`) is present. Ensure your directory structure matches this expectation.  Ensure your `test_main.py` file contains appropriate tests for `main.py`, including the `test_divide()` function mentioned in your prompt. Add more tests to your project, and run the tests thoroughly to cover all aspects of your code.  If your project requires additional configuration (e.g., using virtual environments), add them to the workflow file accordingly.
+**Example `test_main.py`:**
+```python
+import pytest
+from main import add, subtract, divide, multiply, is_even, get_max
+
+def test_add():
+    assert add(2, 3) == 5
+    assert add(-1, 1) == 0
+```
+
+**Important:**  This configuration assumes a relatively simple project structure.  If your project has a more complex setup (e.g., virtual environments), adjust the workflow accordingly.  Always thoroughly examine the test output to understand the root cause of any failures. Remember to commit and push the `.github/workflows/test.yml` file to your repository for the workflow to be triggered.
 
 ## Generated Files
 
@@ -96,7 +112,7 @@ This simple project structure does not require any specific project-level config
 
 - Generated by: KHarish15
 - Repository: KHarish15/testing
-- Generated on: 2025-07-31 22:34:59
+- Generated on: 2025-07-31 22:56:40
 
 ## Security Note
 
